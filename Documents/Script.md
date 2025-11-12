@@ -32,8 +32,8 @@ This can be represented as follows:
 - We consider only the matrix multiplication component $\vec{h}=W\vec{x}$
 - Rather than fine-tuning $W$ itself, we treat this as fixed $W_0$ and fine tune an additional $\Delta W$
 - This $\Delta W$ is decomposed into two low rank matrices
+- This leaves the new low rank matrices as trainable weights
 
-<!-- TODO: Animation here showing LoRA breakdown from existing -->
 These low rank matrices are updated through traditional gradient descent when fine-tuning the model without modifying the weights of the base model.
 
 ### LoRA: Advantages and Disadvantages
@@ -42,7 +42,6 @@ These low rank matrices are updated through traditional gradient descent when fi
 
 - LoRA is a true generalisation of fine tuning in a manner which additional layers and prefix based methods aren't. Increasing the rank $r$ eventually converges to training the original model.
 - It has no inference latency as we can easily calculate $W_0 + BA$ at inference time and easily change our model weights to those of a different fine-tuned model with $W_0 + B'A'$
-<!-- TODO: Do animation of W_0 -->
 - This decomposition also makes the weight updates more interpretable in relation to the overall model weights
 - Furthermore, the paper finds that even extremely low ranks such as 1 or 2 are sufficient to attain strong fine-tuning performance for large performance gains
 
@@ -78,9 +77,8 @@ Analysis within the paper suggests that this performance occurs as $\Delta W$ is
 
 ## Discussion Points
 
-1. <!-- TODO: -->
+1. LoRA low rank effectiveness - If the model is so overparameterised that even a completely rank deficient LoRA can pull out the relevant features, how is LoRA able to find that relevant feature within the myriad features of the model.
 2. <!-- TODO: -->
-3. <!-- TODO: -->
 
 ## Questions
 

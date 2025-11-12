@@ -1,41 +1,44 @@
 from manim import (
-    DOWN,
-    LEFT,
-    UP,
-    Text,
-    TexTemplate,
-    config,
-)
-from manim_slides import Slide  # type: ignore
-from mayutils.objects.datetime import DateTime
-from manim import (
+    BLUE,
     DL,
+    DOWN,
     DR,
+    GREY,
+    LEFT,
+    ORANGE,
+    ORIGIN,
+    RED,
     RIGHT,
     UL,
-    Tex,
-    Line,
-    Unwrite,
-    MoveAlongPath,
-    linear,
+    UP,
+    UR,
+    WHITE,
+    YELLOW,
+    BulletedList,
+    Circle,
     Dot,
     FadeIn,
     FadeOut,
-    MathTex,
-    Write,
-    RED,
-    YELLOW,
-    VGroup,
-    Circle,
-    SVGMobject,
-    ReplacementTransform,
     LaggedStartMap,
+    Line,
     MarkupText,
-    ORIGIN,
-    UR,
-    WHITE,
-    GREY,
+    MathTex,
+    MoveAlongPath,
+    Polygon,
+    Rectangle,
+    ReplacementTransform,
+    SVGMobject,
+    Tex,
+    Text,
+    TexTemplate,
+    Unwrite,
+    VGroup,
+    Write,
+    config,
+    linear,
 )
+from manim_slides import Slide  # type: ignore
+from mayutils.objects.datetime import DateTime
 
 from qlora_presentation.assets import ASSET_DIR
 from qlora_presentation.visualisation.styles import FontSize, FontWeight, Style
@@ -605,13 +608,8 @@ class Main(Slide):
         ).center().shift(0.5 * UP)
 
         self.play(
-            Write(introduction[0], run_time=1),  # type: ignore
+            Write(introduction, run_time=1.5),  # type: ignore
         )
-        self.next_slide()
-        self.play(
-            Write(introduction[1], run_time=1),  # type: ignore
-        )
-        self.next_slide()
 
         total = self.back_propagation()
 
@@ -643,6 +641,7 @@ class Main(Slide):
         old_equation = equation
         equation = MathTex(r"\vec{h}=(W_0 + \Delta W)\vec{x} + \vec{b}")
         self.play(ReplacementTransform(old_equation, equation))
+        self.next_slide()
         old_equation = equation
         equation = MathTex(r"\vec{h}=W_0\vec{x} + \Delta W\vec{x} + \vec{b}")
         self.play(
@@ -679,22 +678,118 @@ class Main(Slide):
             ReplacementTransform(old_equation, equation),
         )
         self.next_slide()
-        equations = VGroup(
-            equation,
-            additional_equation_3,
-        )
         self.play(
-            equations.animate.shift(UP * 2),
-            # Unwrite(equation),
-            # Unwrite(additional_equation_3),
-        )
-        self.next_slide()
-        self.play(
-            Unwrite(equation),
+            equation.animate.shift(UP * 2 + LEFT * 3),
             Unwrite(additional_equation_3),
         )
+        x = Rectangle(
+            width=0.5,
+            height=3,
+            color=GREY,
+            fill_color=GREY,
+            fill_opacity=0.6,
+        )
+        tex_label_x = MathTex(r"\vec{x}", font_size=48)
+        tex_label_x.move_to(x.get_center())
+        x = VGroup(x, tex_label_x)
+        x.shift(DOWN * 0 + LEFT * 0)
+        w = Rectangle(
+            width=3,
+            height=3,
+            color=BLUE,
+            fill_color=BLUE,
+            fill_opacity=0.6,
+        )
+        tex_label_w = MathTex(r"W \in \mathbb{R}^{d\times k}", font_size=48)
+        tex_label_w.move_to(w.get_center())
+        w = VGroup(w, tex_label_w)
+        w.next_to(x, RIGHT, buff=0.5)
+        h = Rectangle(
+            width=0.5,
+            height=3,
+            color=GREY,
+            fill_color=GREY,
+            fill_opacity=0.6,
+        )
+        tex_label_h = MathTex(r"\vec{h}", font_size=48)
+        tex_label_h.move_to(h.get_center())
+        h = VGroup(h, tex_label_h)
+        h.next_to(w, RIGHT, buff=0.5)
+        self.play(
+            FadeIn(x),
+            FadeIn(w),
+            FadeIn(h),
+        )
+        self.next_slide()
 
+        a = Polygon(
+            w.get_corner(LEFT + DOWN) + UP,
+            w.get_corner(LEFT + DOWN) + 2 * DOWN,
+            w.get_corner(LEFT + DOWN) + DOWN + RIGHT,
+            w.get_corner(LEFT + DOWN) + RIGHT,
+            color=ORANGE,
+            fill_color=ORANGE,
+            fill_opacity=0.6,
+        )
+        tex_label_a = MathTex(
+            r"A_0\sim\mathcal{N}(0, \sigma^2)^{(d \times r)}", font_size=48
+        )
+        tex_label_a.move_to(a.get_center())
+        a = VGroup(a, tex_label_a)
+        b = Polygon(
+            w.get_corner(RIGHT + DOWN) + UP,
+            w.get_corner(RIGHT + DOWN) + 2 * DOWN,
+            w.get_corner(RIGHT + DOWN) + DOWN + LEFT,
+            w.get_corner(RIGHT + DOWN) + LEFT,
+            color=ORANGE,
+            fill_color=ORANGE,
+            fill_opacity=0.6,
+        )
+        tex_label_b = MathTex(r"B_0 \equiv 0", font_size=48)
+        tex_label_b.move_to(b.get_center()).shift(DOWN * 0.5)
+        b = VGroup(b, tex_label_b)
+        self.play(
+            w.animate.shift(UP * 2),
+            FadeIn(a),
+            FadeIn(b),
+        )
+        self.next_slide()
+        new_tex_label_a = MathTex(r"A", font_size=48)
+        new_tex_label_a.move_to(tex_label_a.get_center())
+        new_tex_label_b = MathTex(r"B", font_size=48)
+        new_tex_label_b.move_to(tex_label_b.get_center()).shift(UP * 0.5)
+        self.play(
+            ReplacementTransform(tex_label_a, new_tex_label_a),
+            ReplacementTransform(tex_label_b, new_tex_label_b),
+        )
+        a = VGroup(a, new_tex_label_a)
+        b = VGroup(b, new_tex_label_b)
+        self.next_slide()
+        # TODO: Finish
+        self.play(
+            w.animate.shift(DOWN * 2),
+            a.animate.shift(UP * 2),
+            b.animate.shift(UP * 2),
+        )
+        new_w = Rectangle(
+            width=3,
+            height=3,
+            color=YELLOW,
+            fill_color=YELLOW,
+            fill_opacity=0.6,
+        )
+        tex_label_new_w = MathTex(r"W*", font_size=48)
+        tex_label_new_w.move_to(new_w.get_center())
+        new_w = VGroup(new_w, tex_label_new_w)
+        new_w.move_to(w)
+        self.play(FadeOut(a), FadeOut(b), ReplacementTransform(w, new_w))
         transform = self.new_slide()
+        self.play(
+            FadeOut(x),
+            FadeOut(new_w),
+            FadeOut(h),
+        )
+
 
         old_slide_title = slide_title
         slide_title = (
@@ -708,9 +803,33 @@ class Main(Slide):
             .set_stroke(color=STYLE.foreground.primary)
         )
 
+        left_points = BulletedList(
+            "True Generalisation of Fine-Tuning",
+            "No inference latency",
+            "More interpretable weights",
+            "Effective even at low ranks",
+            font_size=FontSize.CONTENT,
+        )
+        right_points = BulletedList(
+            "Introduces information loss",
+            "Determining rank is non-trivial",
+            font_size=FontSize.CONTENT,
+        )
+        columns = VGroup(left_points, right_points).arrange(RIGHT, buff=2)
+        columns.move_to(ORIGIN)
+
         self.play(
             transform,
+            Unwrite(equation),
+            Unwrite(additional_equation_3),
             ReplacementTransform(old_slide_title, slide_title),
+        )
+        self.play(
+            Write(left_points),
+        )
+        self.next_slide()
+        self.play(
+            Write(right_points),
         )
 
         transform = self.new_slide()
@@ -730,6 +849,7 @@ class Main(Slide):
         self.play(
             transform,
             ReplacementTransform(old_slide_title, slide_title),
+            Unwrite(columns),
         )
 
         table_tex = r"""
@@ -844,15 +964,11 @@ class Main(Slide):
 
         discussion = VGroup(
             Text(
-                text="1. Discussion Point 1: TODO",
+                text="1. It's surprising that LoRA can perform well even at low ranks.\nIs there truly that low dimensionality needed for the task?\nAnd if so how can LoRA find it effectively amongst the heavily overparameterised model?",
                 weight=str(FontWeight.SEMIBOLD),
             ),
             Text(
                 text="2. Discussion Point 2: TODO",
-                weight=str(FontWeight.SEMIBOLD),
-            ),
-            Text(
-                text="3. Discussion Point 3: TODO",
                 weight=str(FontWeight.SEMIBOLD),
             ),
         )
