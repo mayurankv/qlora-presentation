@@ -636,6 +636,64 @@ class Main(Slide):
             ReplacementTransform(old_slide_title, slide_title),
         )
 
+        self.next_slide()
+        equation = MathTex(r"\vec{h}=W\vec{x} + \vec{b}")
+        self.play(Write(equation))
+        self.next_slide()
+        old_equation = equation
+        equation = MathTex(r"\vec{h}=(W_0 + \Delta W)\vec{x} + \vec{b}")
+        self.play(ReplacementTransform(old_equation, equation))
+        old_equation = equation
+        equation = MathTex(r"\vec{h}=W_0\vec{x} + \Delta W\vec{x} + \vec{b}")
+        self.play(
+            ReplacementTransform(old_equation, equation),
+        )
+        self.next_slide()
+        additional_equation_1 = MathTex(r"W_0,\Delta W \in \mathbb{R}^{d\times k}")
+        additional_equation_2 = MathTex(r"\Delta W = AB")
+        additional_equation_3 = MathTex(
+            r"A \in \mathbb{R}^{d\times r}, B \in \mathbb{R}^{r\times k}, r \ll \min(d,k)"
+        )
+        self.play(Write(additional_equation_1.next_to(equation, DOWN, buff=0.5)))
+
+        self.play(
+            Write(additional_equation_2.next_to(additional_equation_1, DOWN, buff=0.5))
+        )
+        self.play(
+            Write(additional_equation_3.next_to(additional_equation_2, DOWN, buff=0.5))
+        )
+
+        self.next_slide()
+        old_equation = equation
+        equation = MathTex(r"\vec{h}=W_0\vec{x} + AB\vec{x} + \vec{b}")
+        self.play(
+            Unwrite(additional_equation_2),
+            Unwrite(additional_equation_1),
+            ReplacementTransform(old_equation, equation),
+            additional_equation_3.animate.next_to(old_equation, DOWN),
+        )
+        self.next_slide()
+        old_equation = equation
+        equation = MathTex(r"\vec{h}=AB\vec{x} + (W_0\vec{x} + \vec{b})")
+        self.play(
+            ReplacementTransform(old_equation, equation),
+        )
+        self.next_slide()
+        equations = VGroup(
+            equation,
+            additional_equation_3,
+        )
+        self.play(
+            equations.animate.shift(UP * 2),
+            # Unwrite(equation),
+            # Unwrite(additional_equation_3),
+        )
+        self.next_slide()
+        self.play(
+            Unwrite(equation),
+            Unwrite(additional_equation_3),
+        )
+
         transform = self.new_slide()
 
         old_slide_title = slide_title

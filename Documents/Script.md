@@ -26,9 +26,15 @@ A method of fine-tuning which doesn't suffer from these drawbacks and also attai
 
 LoRA takes inspiration from a paper showing that over-parametrised models such as LLMs have a low intrinsic dimesnion. The approach of this paper from Microsoft hypothesises that when fine-tuning a model, the change in weights that occurs has a low intrinsic rank, hence the name Low Rank Adaptation.
 This hypothesis means that you don't have to train a models weights directly, but instead a low rank representation of the CHANGES to those weights. This means you don:t have to track changes to all the weights of the model making this fine-tuning much more memory and compute efficient.
-<!-- TODO: Animation here showing LoRA breakdown from existing -->
+This can be represented as follows:
 
-<!-- TODO: -->
+- For each weight matrix $\vec{h}=W\vec{x} + \vec{b}$
+- We consider only the matrix multiplication component $\vec{h}=W\vec{x}$
+- Rather than fine-tuning $W$ itself, we treat this as fixed $W_0$ and fine tune an additional $\Delta W$
+- This $\Delta W$ is decomposed into two low rank matrices
+
+<!-- TODO: Animation here showing LoRA breakdown from existing -->
+These low rank matrices are updated through traditional gradient descent when fine-tuning the model without modifying the weights of the base model.
 
 ### LoRA: Advantages and Disadvantages
 
@@ -42,13 +48,15 @@ This hypothesis means that you don't have to train a models weights directly, bu
 
 #### Drawbacks (LoRA)
 
-- Deciding
+- Reducing the dimensionality of the weight updates introduces information loss which can be comparable to overfitting
+  - In practice LLMs are so over-parameterised this doesn't have a significant effect
+- Determining the optimal rank hyperparameter $r$ to use can be challenging
 
 ### LoRA: Performance
 
-<!-- TODO: -->
+Some of the results given in the paper show that GPT3 fine tuned with LoRA outperforms the other comparable methods, even improving on the baseline full fine-tuning.
 
-<!-- TODO: Discussion of extra paper stuff goes here -->
+Analysis within the paper suggests that this performance occurs as $\Delta W$ is able to amplify existing features in the model that are relevant to the downstream task.
 
 ## QLoRA
 
