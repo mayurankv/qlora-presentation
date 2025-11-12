@@ -1,0 +1,51 @@
+[project]
+name = "qlora-presentation"
+version = "0.1.0"
+description = "Presentation on QLora"
+authors = [
+    {name = "Mayuran Visakan", email = "mayuran.k.v@gmail.com"}
+]
+maintainers = [
+    {name = "Mayuran Visakan", email = "mayuran.k.v@gmail.com"}
+]
+classifiers = [
+    # TODO
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.12,<4.0"
+dependencies = [
+	"ipykernel>=7.1.0",
+	"manim",
+	# "mayutils",
+	"manim-slides[full,pyside6]>=5.5.2",
+	"mayutils>=1.2.29",
+	"typer",
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage",  # testing
+    "pytest",  # testing
+    "ruff",  # linting
+    "ty", # checking types
+    "mypy", # checking types
+    "ipdb", # debugging
+]
+
+[project.urls]
+bugs = "https://github.com/{{cookiecutter.__gh_slug}}/issues"
+changelog = "https://github.com/{{cookiecutter.__gh_slug}}/blob/master/CHANGELOG.md"
+homepage = "https://github.com/{{cookiecutter.__gh_slug}}"
+
+[tool.ty]
+# All rules are enabled as "error" by default; no need to specify unless overriding.
+# Example override: relax a rule for the entire project (uncomment if needed).
+# rules.TY015 = "warn"  # For invalid-argument-type, warn instead of error.
+
+[tool.uv]
+package = true
+prerelease = "if-necessary-or-explicit"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
