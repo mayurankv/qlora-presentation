@@ -14,6 +14,8 @@ from manim import (
     UR,
     WHITE,
     YELLOW,
+    GREEN,
+    Mobject,
     BulletedList,
     Circle,
     Dot,
@@ -22,10 +24,11 @@ from manim import (
     LaggedStartMap,
     Line,
     MarkupText,
+    Arrow,
     MathTex,
     MoveAlongPath,
     Polygon,
-    Rectangle,
+    RoundedRectangle,
     ReplacementTransform,
     SVGMobject,
     Tex,
@@ -34,9 +37,12 @@ from manim import (
     Unwrite,
     VGroup,
     Write,
+    DoubleArrow,
     config,
     linear,
 )
+from numpy.typing import NDArray
+import numpy as np
 from manim_slides import Slide  # type: ignore
 from mayutils.objects.datetime import DateTime
 
@@ -158,6 +164,50 @@ class Main(Slide):
         return ReplacementTransform(
             mobject=old_slide_number, target_mobject=self._slide_number
         )
+
+    def get_equidist_xs(
+        self,
+        obj: Mobject,
+        n: int = 3,
+        margin: float = 0.15,
+    ) -> NDArray:
+        w, h = obj.width, obj.height
+        x_left = obj.get_left()[0] + margin * w
+        x_right = obj.get_right()[0] - margin * w
+        xs = (
+            np.linspace(x_left, x_right, n)
+            if n != 1
+            else np.array([(x_left + x_right) / 2])
+        )
+
+        return xs
+
+    def add_up_arrows(
+        self,
+        rec,
+        n: int = 3,
+        color=GREEN,
+        margin: float = 0.15,
+        height_ratio: float = 0.8,
+    ) -> VGroup:
+        h = rec.height
+        xs = self.get_equidist_xs(rec, n, margin)
+
+        y_start = rec.get_bottom()[1] + 0.12 * h
+        length = height_ratio * h
+
+        arrows = VGroup(
+            *[
+                Arrow(
+                    start=[x, y_start, 0],
+                    end=[x, y_start + length, 0],
+                    buff=0,
+                    stroke_width=6,
+                ).set_color(color)
+                for x in xs
+            ]
+        )
+        return arrows
 
     def back_propagation(
         self,
@@ -627,16 +677,14 @@ class Main(Slide):
             .set_stroke(color=STYLE.foreground.primary)
         )
 
+        equation = MathTex(r"\vec{h}=W\vec{x} + \vec{b}")
         self.play(
             FadeOut(total),
             Unwrite(introduction, run_time=1.2),
             transform,
             ReplacementTransform(old_slide_title, slide_title),
+            Write(equation),
         )
-
-        self.next_slide()
-        equation = MathTex(r"\vec{h}=W\vec{x} + \vec{b}")
-        self.play(Write(equation))
         self.next_slide()
         old_equation = equation
         equation = MathTex(r"\vec{h}=(W_0 + \Delta W)\vec{x} + \vec{b}")
@@ -680,20 +728,21 @@ class Main(Slide):
         self.next_slide()
         self.play(
             equation.animate.shift(UP * 2 + LEFT * 3),
-            Unwrite(additional_equation_3),
+            Unwrite(additional_equation_3, run_time=1),
         )
-        x = Rectangle(
+        x = RoundedRectangle(
             width=0.5,
             height=3,
             color=GREY,
             fill_color=GREY,
             fill_opacity=0.6,
+            corner_radius=0.1,
         )
         tex_label_x = MathTex(r"\vec{x}", font_size=48)
         tex_label_x.move_to(x.get_center())
         x = VGroup(x, tex_label_x)
         x.shift(DOWN * 0 + LEFT * 0)
-        w = Rectangle(
+        w = RoundedRectangle(
             width=3,
             height=3,
             color=BLUE,
@@ -704,12 +753,13 @@ class Main(Slide):
         tex_label_w.move_to(w.get_center())
         w = VGroup(w, tex_label_w)
         w.next_to(x, RIGHT, buff=0.5)
-        h = Rectangle(
+        h = RoundedRectangle(
             width=0.5,
             height=3,
             color=GREY,
             fill_color=GREY,
             fill_opacity=0.6,
+            corner_radius=0.1,
         )
         tex_label_h = MathTex(r"\vec{h}", font_size=48)
         tex_label_h.move_to(h.get_center())
@@ -771,7 +821,7 @@ class Main(Slide):
             a.animate.shift(UP * 2),
             b.animate.shift(UP * 2),
         )
-        new_w = Rectangle(
+        new_w = RoundedRectangle(
             width=3,
             height=3,
             color=YELLOW,
@@ -789,7 +839,6 @@ class Main(Slide):
             FadeOut(new_w),
             FadeOut(h),
         )
-
 
         old_slide_title = slide_title
         slide_title = (
@@ -901,6 +950,216 @@ class Main(Slide):
             .set_stroke(color=STYLE.foreground.primary)
         )
 
+        nft_base = (
+            RoundedRectangle(
+                width=2.5,
+                height=0.5,
+                color=GREY,
+                fill_color=GREY,
+                fill_opacity=0.2,
+                corner_radius=0.1,
+            )
+            .center()
+            .shift(LEFT * 4 + DOWN * 2)
+        )
+        nft_base_label = Text("Transformer (16 bit)", font_size=FontSize.INFO)
+        nft_base_label.next_to(nft_base, DOWN, buff=0.2)
+        arrows = self.add_up_arrows(nft_base, color=GREEN)
+        nft_base = VGroup(nft_base, nft_base_label, arrows)
+
+        nft_optimiser = RoundedRectangle(
+            width=2.5,
+            height=1,
+            color=RED,
+            fill_color=RED,
+            fill_opacity=0.2,
+            corner_radius=0.1,
+        ).next_to(nft_base, UP, buff=2.5)
+        nft_optimiser_label = Text("Optimiser (32 bit)", font_size=FontSize.INFO)
+        nft_optimiser_label.next_to(nft_optimiser, UP, buff=0.2)
+        xs = self.get_equidist_xs(nft_optimiser, n=3)
+        arrows = VGroup(
+            *[
+                Arrow(
+                    start=[x, nft_optimiser.get_bottom()[1], 0],
+                    end=[x, nft_base.get_top()[1], 0],
+                    buff=0.1,
+                    # stroke_width=2,
+                    max_tip_length_to_length_ratio=0.1,
+                ).set_color(RED)
+                for x in xs
+            ]
+        )
+
+        nft_full = VGroup(
+            nft_base,
+            nft_optimiser,
+            nft_optimiser_label,
+            arrows,
+        )
+
+        pair = VGroup(
+            Polygon(
+                DOWN * 0.5 + LEFT * 0.5,
+                DOWN * 1.5 + LEFT * 1.5,
+                DOWN * 1.5 + RIGHT * 1.5,
+                DOWN * 0.5 + RIGHT * 0.5,
+                color=ORANGE,
+                fill_color=ORANGE,
+                fill_opacity=0.6,
+            ),
+            Polygon(
+                UP * 0.5 + LEFT * 0.5,
+                UP * 1.5 + LEFT * 1.5,
+                UP * 1.5 + RIGHT * 1.5,
+                UP * 0.5 + RIGHT * 0.5,
+                color=ORANGE,
+                fill_color=ORANGE,
+                fill_opacity=0.6,
+            ),
+        )
+
+        lora_base = (
+            RoundedRectangle(
+                width=2.5,
+                height=0.5,
+                color=GREY,
+                fill_color=GREY,
+                fill_opacity=0.2,
+                corner_radius=0.1,
+            )
+            .center()
+            .shift(LEFT * 0 + DOWN * 2)
+        )
+        lora_base_label = Text("Transformer (16 bit)", font_size=FontSize.INFO)
+        lora_base_label.next_to(lora_base, DOWN, buff=0.2)
+        arrows = self.add_up_arrows(lora_base, color=GREEN)
+        arrows_2 = self.add_up_arrows(lora_base, color=GREEN).next_to(
+            lora_base,
+            UP,
+            buff=0.1,
+        )
+        lora_base = VGroup(lora_base, lora_base_label, arrows, arrows_2)
+
+        lora_optimiser = RoundedRectangle(
+            width=0.5,
+            height=1,
+            color=RED,
+            fill_color=RED,
+            fill_opacity=0.2,
+            corner_radius=0.1,
+        )
+        lora_optimisers = VGroup(
+            lora_optimiser,
+            lora_optimiser.copy().shift(RIGHT),
+            lora_optimiser.copy().shift(LEFT),
+        ).move_to((lora_base.get_center()[0], nft_optimiser.get_center()[1], 0))
+        lora_optimiser_label = Text("Optimiser (32 bit)", font_size=FontSize.INFO)
+        lora_optimiser_label.next_to(lora_optimisers, UP, buff=0.2)
+
+        lora_adapters = VGroup(
+            pair,
+            pair.copy().shift(RIGHT * 4),
+            pair.copy().shift(LEFT * 4),
+        )
+        lora_adapters.scale(lora_optimisers.width / lora_adapters.width).next_to(
+            arrows_2, UP, 0.1
+        )
+        lora_adapters_label = Text(
+            "Adapters\n(16 bit)", font_size=FontSize.INFO
+        ).next_to(lora_adapters, RIGHT, buff=0.1)
+        xs = self.get_equidist_xs(lora_base, n=3)
+        arrows_3 = VGroup(
+            *[
+                Arrow(
+                    start=[x, lora_optimisers.get_bottom()[1], 0],
+                    end=[x, lora_adapters.get_top()[1], 0],
+                    buff=0.1,
+                    # stroke_width=2,
+                    max_tip_length_to_length_ratio=0.1,
+                ).set_color(RED)
+                for x in xs
+            ]
+        )
+
+        lora_full = VGroup(
+            lora_base,
+            lora_adapters_label,
+            lora_adapters,
+            lora_optimiser_label,
+            lora_optimisers,
+            arrows_3,
+        )
+
+        qlora_base = (
+            RoundedRectangle(
+                width=1,
+                height=0.5,
+                color=GREY,
+                fill_color=GREY,
+                fill_opacity=0.2,
+                corner_radius=0.1,
+            )
+            .center()
+            .shift(RIGHT * 4 + DOWN * 2)
+        )
+        qlora_base_label = Text("Transformer (4 bit)", font_size=FontSize.INFO)
+        qlora_base_label.next_to(qlora_base, DOWN, buff=0.2)
+        arrows = self.add_up_arrows(qlora_base, n=1, color=GREEN)
+        qlora_base = VGroup(qlora_base, qlora_base_label, arrows)
+
+        qlora_optimisers = lora_optimisers.copy().move_to(
+            (qlora_base.get_center()[0], nft_optimiser.get_center()[1], 0)
+        )
+        qlora_optimiser_label = Text("Optimiser (32 bit)", font_size=FontSize.INFO)
+        qlora_optimiser_label.next_to(qlora_optimisers, UP, buff=0.2)
+        xs = self.get_equidist_xs(qlora_base, n=3)
+        arrows_2 = VGroup(
+            *[
+                Arrow(
+                    start=(qlora_base.get_center()[0], qlora_base.get_top()[1], 0),
+                    end=(x, qlora_base.get_top()[1] + qlora_base.height, 0),
+                    buff=0.1,
+                    # stroke_width=2,
+                ).set_color(GREEN)
+                for x in xs
+            ]
+        )
+
+        qlora_adapters = lora_adapters.copy().next_to(arrows_2, UP, 0.1)
+        arrows_3 = VGroup(
+            *[
+                Arrow(
+                    start=[x, lora_optimisers.get_bottom()[1], 0],
+                    end=[x, lora_adapters.get_top()[1], 0],
+                    buff=0.1,
+                    # stroke_width=2,
+                    max_tip_length_to_length_ratio=0.1,
+                ).set_color(RED)
+                for x in xs
+            ]
+        )
+        cpu = RoundedRectangle(
+            width=1,
+            height=1,
+            color=YELLOW,
+            fill_color=YELLOW,
+            fill_opacity=0.2,
+            corner_radius=0.1,
+        ).next_to(qlora_optimisers, RIGHT, buff=2)
+        cpu_label = Text("CPU", font_size=FontSize.INFO)
+        cpu_label.next_to(cpu, RIGHT, buff=0.2)
+        arrow = DoubleArrow(cpu.get_left(), cpu_label.get_right(), buff=0.2, color=BLUE)
+
+        qlora_full = VGroup(
+            qlora_base,
+            qlora_adapters,
+            arrows_3,
+            cpu,
+            cpu_label,
+            arrow,
+        )
+
         self.play(
             Unwrite(caption, run_time=0.5),
         )
@@ -908,6 +1167,17 @@ class Main(Slide):
             Unwrite(table, run_time=1),
             transform,
             ReplacementTransform(old_slide_title, slide_title),
+            LaggedStartMap(FadeIn, nft_full, lag_ratio=0.05),
+        )
+        self.next_slide()
+
+        self.play(
+            LaggedStartMap(FadeIn, lora_full, lag_ratio=0.05),
+        )
+        self.next_slide()
+
+        self.play(
+            LaggedStartMap(FadeIn, qlora_full, lag_ratio=0.05),
         )
 
         transform = self.new_slide()
@@ -927,6 +1197,9 @@ class Main(Slide):
         self.play(
             transform,
             ReplacementTransform(old_slide_title, slide_title),
+            FadeOut(nft_full),
+            FadeOut(lora_full),
+            FadeOut(qlora_full),
         )
 
         transform = self.new_slide()
@@ -964,7 +1237,7 @@ class Main(Slide):
 
         discussion = VGroup(
             Text(
-                text="1. It's surprising that LoRA can perform well even at low ranks.\nIs there truly that low dimensionality needed for the task?\nAnd if so how can LoRA find it effectively amongst the heavily overparameterised model?",
+                text="1. It's surprising that LoRA can perform well even at low ranks.\nIs there truly that low dimensionality needed for the task?\nAnd if so how can LoRA find it effectively amongst the heavily\noverparameterised model?",
                 weight=str(FontWeight.SEMIBOLD),
             ),
             Text(

@@ -16,6 +16,7 @@ LLMs have rapidly become useful in many fields, including at Lendable, due to th
 
 Naive fine-tuning is the relatively simple approach of taking an existing model, and continuing its training regime with the models trained weights as a starting point.
 This involves updating ALL of the parameters of the model with full forwards and backpropogation passes to update the weights. This makes fine-tuning very large models extremely inefficient.
+Parameter Efficient Fine-Tuning is the name given to approaches that aim to fine-tune a model by training a number of weights much smaller than the total size of the model.
 Some approaches involve limiting the weights being updated or training external modules to adapt the model for a specific task, but these approaches fail to reach the naive fine-tuning baseline performnce. In addition they often introduce inference latency or reduce the models usable context window.
 
 The diagrams shown are a simplification but appraoches which add adapter layers to the model must be run in sequence breaking the parallelism of the deep models and prompt engineering style prefix layer appraoches suffer from decreasing context windows and performance gains which are hard to map to trainable parameters.
@@ -59,6 +60,7 @@ Analysis within the paper suggests that this performance occurs as $\Delta W$ is
 
 ## QLoRA
 
+QLoRA stands for Quantised Low-Rank Adaptation and is an extension of LoRA which inorporates quantisation. Quantisation refers to representing a 
 <!-- TODO: -->
 
 ### QLoRA: Advantages and Disadvantages
