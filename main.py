@@ -1031,6 +1031,7 @@ class Main(Slide):
             .center()
             .shift(LEFT * 0 + DOWN * 2)
         )
+        xs = self.get_equidist_xs(lora_base, n=3)
         lora_base_label = Text("Transformer (16 bit)", font_size=FontSize.INFO)
         lora_base_label.next_to(lora_base, DOWN, buff=0.2)
         arrows = self.add_up_arrows(lora_base, color=GREEN)
@@ -1050,9 +1051,10 @@ class Main(Slide):
             corner_radius=0.1,
         )
         lora_optimisers = VGroup(
-            lora_optimiser,
-            lora_optimiser.copy().shift(RIGHT),
-            lora_optimiser.copy().shift(LEFT),
+            *[
+                lora_optimiser.copy().move_to((x, lora_optimiser.get_center()[1], 0))
+                for x in xs
+            ]
         ).move_to((lora_base.get_center()[0], nft_optimiser.get_center()[1], 0))
         lora_optimiser_label = Text("Optimiser (32 bit)", font_size=FontSize.INFO)
         lora_optimiser_label.next_to(lora_optimisers, UP, buff=0.2)
@@ -1117,8 +1119,8 @@ class Main(Slide):
         arrows_2 = VGroup(
             *[
                 Arrow(
-                    start=(qlora_base.get_center()[0], qlora_base.get_top()[1], 0),
-                    end=(x, qlora_base.get_top()[1] + qlora_base.height, 0),
+                    start=qlora_base.get_top(),
+                    end=(x, lora_adapters.get_bottom()[1], 0),
                     buff=0.1,
                     # stroke_width=2,
                 ).set_color(GREEN)
@@ -1146,14 +1148,17 @@ class Main(Slide):
             fill_color=YELLOW,
             fill_opacity=0.2,
             corner_radius=0.1,
-        ).next_to(qlora_optimisers, RIGHT, buff=2)
+        ).next_to(qlora_optimisers, RIGHT, buff=0.5)
         cpu_label = Text("CPU", font_size=FontSize.INFO)
-        cpu_label.next_to(cpu, RIGHT, buff=0.2)
-        arrow = DoubleArrow(cpu.get_left(), cpu_label.get_right(), buff=0.2, color=BLUE)
+        cpu_label.next_to(cpu, UP, buff=0.2)
+        arrow = DoubleArrow(cpu.get_right(), cpu_label.get_left(), buff=0.2, color=BLUE)
 
         qlora_full = VGroup(
             qlora_base,
+            qlora_optimiser_label,
+            qlora_optimisers,
             qlora_adapters,
+            arrows_2,
             arrows_3,
             cpu,
             cpu_label,
@@ -1167,17 +1172,17 @@ class Main(Slide):
             Unwrite(table, run_time=1),
             transform,
             ReplacementTransform(old_slide_title, slide_title),
-            LaggedStartMap(FadeIn, nft_full, lag_ratio=0.05),
+            LaggedStartMap(Write, nft_full, lag_ratio=0.05),
         )
         self.next_slide()
 
         self.play(
-            LaggedStartMap(FadeIn, lora_full, lag_ratio=0.05),
+            LaggedStartMap(Write, lora_full, lag_ratio=0.05),
         )
         self.next_slide()
 
         self.play(
-            LaggedStartMap(FadeIn, qlora_full, lag_ratio=0.05),
+            LaggedStartMap(Write, qlora_full, lag_ratio=0.05),
         )
 
         transform = self.new_slide()
@@ -1197,9 +1202,33 @@ class Main(Slide):
         self.play(
             transform,
             ReplacementTransform(old_slide_title, slide_title),
-            FadeOut(nft_full),
-            FadeOut(lora_full),
-            FadeOut(qlora_full),
+            Unwrite(nft_full),
+            Unwrite(lora_full),
+            Unwrite(qlora_full),
+        )
+
+        # TODO: Advantages and disadvantages here
+        left_points = BulletedList(
+            "Same advantaages as LoRA",
+            "Requires SIGNIFICANTLY less memory to\nfine-tune models",
+            "Achieves full baseline fine-tuning\nperformance",
+            font_size=FontSize.CONTENT,
+        )
+        right_points = BulletedList(
+            "Quantisation causes information loss",
+            "This restricted representation can result in\nless effective models than with LoRA",
+            "Fine-tuning performance can be dependent on\nthe dataset",
+            font_size=FontSize.CONTENT,
+        )
+        columns = VGroup(left_points, right_points).arrange(RIGHT, buff=2)
+        columns.move_to(ORIGIN)
+
+        self.play(
+            Write(left_points),
+        )
+        self.next_slide()
+        self.play(
+            Write(right_points),
         )
 
         transform = self.new_slide()
@@ -1221,6 +1250,8 @@ class Main(Slide):
             ReplacementTransform(old_slide_title, slide_title),
         )
 
+        # TODO: Performance here
+
         transform = self.new_slide()
 
         old_slide_title = slide_title
@@ -1240,6 +1271,7 @@ class Main(Slide):
                 text="1. It's surprising that LoRA can perform well even at low ranks.\nIs there truly that low dimensionality needed for the task?\nAnd if so how can LoRA find it effectively amongst the heavily\noverparameterised model?",
                 weight=str(FontWeight.SEMIBOLD),
             ),
+            # TODO: Second discussion
             Text(
                 text="2. Discussion Point 2: TODO",
                 weight=str(FontWeight.SEMIBOLD),

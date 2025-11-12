@@ -60,8 +60,10 @@ Analysis within the paper suggests that this performance occurs as $\Delta W$ is
 
 ## QLoRA
 
-QLoRA stands for Quantised Low-Rank Adaptation and is an extension of LoRA which inorporates quantisation. Quantisation refers to representing a 
-<!-- TODO: -->
+QLoRA stands for Quantised Low-Rank Adaptation and is an extension of LoRA which inorporates quantisation. Quantisation refers to representing a floating point number stored in a larger number of bits with fewer bits. This leads to quantisation loss but results in numbers which require less memory to operate on.
+QLoRA Takes the full model and freezes the weights as in LoRA but then quantises the weights of the model to a smaller size. This can't typically be done when fine-tuning as gradients can't propogate through the quantisation operation, but since we are separately training our low rank adaptors, we can quantise these weights without issue.
+Quantisation typically requires normalisation for model stability so QLoRA actually quantises not only the weights, but the normalisation scale factor - this is referred to as double quantisation.
+QLoRA also benefits from storing the optimiser state (i.e. Adam parametes) in CPU freeing up GPU VRAM.
 
 ### QLoRA: Advantages and Disadvantages
 
