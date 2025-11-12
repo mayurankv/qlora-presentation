@@ -76,56 +76,56 @@ class Main(Slide):
         self.tex_template = TexTemplate()
         self.tex_template.add_to_preamble(
             txt=r"""
+                \usepackage{booktabs}
 				\usepackage{amsmath}
 				\usepackage{amssymb}
 				\usepackage{amsfonts}
 				\usepackage{amsthm}
 				\usepackage{mathtools}
 				\usepackage{array}
-				\usepackage{booktabs}
 				\usepackage{xfrac}
 				\usepackage{multirow}
 				\usepackage{newtxmath}
 				%\usepackage{unicode-math}
-				\AtBeginDocument{%
-					\let\mathbb\relax
-					\let\mathcal\relax
-					\DeclareMathAlphabet{\mathbb}{U}{msb}{m}{n}
-					\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-				}
+				# \AtBeginDocument{%
+				# 	\let\mathbb\relax
+				# 	\let\mathcal\relax
+				# 	\DeclareMathAlphabet{\mathbb}{U}{msb}{m}{n}
+				# 	\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+				# }
 
-				\newtheoremstyle{dissertation}
-					{0\topsep}	% Space above
-					{0.6\topsep}	% Space below
-					{}				% Body font
-					{}				% Indent amount
-					{\bfseries}		% Theorem head font
-					{}				% Punctuation after theorem head
-					{0.5em}			% Space after theorem head
-					{}				% Theorem head spec (can be left empty, meaning ‘normal’)
+				# \newtheoremstyle{dissertation}
+				# 	{0\topsep}	% Space above
+				# 	{0.6\topsep}	% Space below
+				# 	{}				% Body font
+				# 	{}				% Indent amount
+				# 	{\bfseries}		% Theorem head font
+				# 	{}				% Punctuation after theorem head
+				# 	{0.5em}			% Space after theorem head
+				# 	{}				% Theorem head spec (can be left empty, meaning ‘normal’)
 
-				\theoremstyle{dissertation}
-				\newtheorem*{definition}{Definition}
-				\newtheorem*{theorem}{Theorem}
-				\newtheorem*{proposition}{Proposition}
-				\newtheorem*{lemma}{Lemma}
-				\newtheorem*{corollary}{Corollary}
-				\newtheorem*{example}{Example}
-				\newtheorem*{remark}{Remark}
-				%\renewcommand{\thetheorem}{\arabic{theorem}}
-				%\renewcommand{\thedefinition}{\arabic{definition}}
+				# \theoremstyle{dissertation}
+				# \newtheorem*{definition}{Definition}
+				# \newtheorem*{theorem}{Theorem}
+				# \newtheorem*{proposition}{Proposition}
+				# \newtheorem*{lemma}{Lemma}
+				# \newtheorem*{corollary}{Corollary}
+				# \newtheorem*{example}{Example}
+				# \newtheorem*{remark}{Remark}
+				# %\renewcommand{\thetheorem}{\arabic{theorem}}
+				# %\renewcommand{\thedefinition}{\arabic{definition}}
 
-				\renewenvironment{proof}[1][\proofname]%
-				{\noindent\trivlist\item\ignorespaces{\bfseries #1. }}%
-					{\hfill $\square$}
+				# \renewenvironment{proof}[1][\proofname]%
+				# {\noindent\trivlist\item\ignorespaces{\bfseries #1. }}%
+				# 	{\hfill $\square$}
 
-				\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
-				\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
-				\newcolumntype{L}{>{\centering\arraybackslash}m{3cm}}
-				\newcolumntype{E}{>{\centering\arraybackslash}m{6cm}}
-				\newcolumntype{F}{>{\centering\arraybackslash}m{7cm}}
-				\newcolumntype{A}{>{\centering\arraybackslash}m{5cm}}
-				\newcommand*{\doi}[1]{\href{http://dx.doi.org/#1}{doi: #1}}
+				# \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+				# \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+				# \newcolumntype{L}{>{\centering\arraybackslash}m{3cm}}
+				# \newcolumntype{E}{>{\centering\arraybackslash}m{6cm}}
+				# \newcolumntype{F}{>{\centering\arraybackslash}m{7cm}}
+				# \newcolumntype{A}{>{\centering\arraybackslash}m{5cm}}
+				# \newcommand*{\doi}[1]{\href{http://dx.doi.org/#1}{doi: #1}}
 			"""
         )
         Text.set_default(
@@ -902,10 +902,12 @@ class Main(Slide):
         )
 
         table_tex = r"""
+        \begin{table}
+        \centering
         \begin{tabular}{l|r|ccc}
-        \hline
+        \toprule
         \textbf{Model \& Method} & \# Trainable & WikiSQL & MNLI-m & SAMSum  \\
-        \hline
+        \midrule
         GPT-3 (FT)                  & 175,255.8M & \textbf{73.8} & 89.5 & 52.0/28.0/44.5 \\
         GPT-3 (BitFit)              & 14.2M      & 71.3 & 91.0 & 51.3/27.4/43.5 \\
         GPT-3 (PreEmbed)            & 3.2M       & 63.1 & 88.6 & 48.3/24.2/40.5 \\
@@ -914,11 +916,12 @@ class Main(Slide):
         GPT-3 (Adapter\textsuperscript{H}) & 40.1M & 73.2 & \textbf{91.5} & 53.2/29.0/45.1 \\
         GPT-3 (LoRA)                & 4.7M       & 73.4 & \textbf{91.7} & \textbf{53.8/29.8/45.9} \\
         GPT-3 (LoRA)                & 37.7M      & \textbf{74.0} & \textbf{91.6} & 53.4/29.2/45.1 \\
-        \hline
+        \bottomrule
         \end{tabular}
+        \end{table}
         """
 
-        table = Tex(table_tex).scale(0.6)
+        table = Tex(table_tex, template=self.tex_template).scale(0.6)
         table.move_to(UP * 0.5)  # shift up to leave space for caption
 
         caption_text = (
@@ -1148,10 +1151,12 @@ class Main(Slide):
             fill_color=YELLOW,
             fill_opacity=0.2,
             corner_radius=0.1,
-        ).next_to(qlora_optimisers, RIGHT, buff=0.5)
+        ).next_to(qlora_optimisers, RIGHT, buff=1)
         cpu_label = Text("CPU", font_size=FontSize.INFO)
         cpu_label.next_to(cpu, UP, buff=0.2)
-        arrow = DoubleArrow(cpu.get_right(), cpu_label.get_left(), buff=0.2, color=BLUE)
+        arrow = DoubleArrow(
+            qlora_optimisers.get_right(), cpu.get_left(), buff=0.2, color=BLUE
+        )
 
         qlora_full = VGroup(
             qlora_base,
@@ -1207,20 +1212,19 @@ class Main(Slide):
             Unwrite(qlora_full),
         )
 
-        # TODO: Advantages and disadvantages here
         left_points = BulletedList(
             "Same advantaages as LoRA",
-            "Requires SIGNIFICANTLY less memory to\nfine-tune models",
-            "Achieves full baseline fine-tuning\nperformance",
+            "Requires SIGNIFICANTLY less memory",
+            "Achieves baseline fine-tuning performance",
             font_size=FontSize.CONTENT,
         )
         right_points = BulletedList(
             "Quantisation causes information loss",
-            "This restricted representation can result in\nless effective models than with LoRA",
-            "Fine-tuning performance can be dependent on\nthe dataset",
+            "Restricted representation limits representation power",
+            "Fine-tuning performance found to be dataset dependent",
             font_size=FontSize.CONTENT,
         )
-        columns = VGroup(left_points, right_points).arrange(RIGHT, buff=2)
+        columns = VGroup(left_points, right_points).arrange(RIGHT, buff=1)
         columns.move_to(ORIGIN)
 
         self.play(
@@ -1245,12 +1249,51 @@ class Main(Slide):
             .set_stroke(color=STYLE.foreground.primary)
         )
 
+        # TODO: Performance here
+
         self.play(
             transform,
+            Unwrite(columns, run_time=1),
             ReplacementTransform(old_slide_title, slide_title),
         )
 
-        # TODO: Performance here
+        table_tex = r"""
+        \begin{table}
+        \centering
+        \begin{tabular}{lrrrrrr}
+        \toprule
+        Dataset & \multicolumn{1}{c}{GLUE (Acc.)} & \multicolumn{5}{c}{Super-NaturalInstructions (RougeL)} \\
+        % \cmidrule{2-7}
+        Model  &  \multicolumn{1}{l}{RoBERTa-large} & \multicolumn{1}{l}{T5-80M} & \multicolumn{1}{l}{T5-250M} & \multicolumn{1}{l}{T5-780M} & \multicolumn{1}{l}{T5-3B} & \multicolumn{1}{l}{T5-11B} \\
+        \midrule
+        BF16 & 88.6 & 40.1                            & 42.1                            & 48.0                               & 54.3                        & 62.0                            \\
+        BF16 replication  & 88.6 & 40.0                              & 42.2                            & 47.3                             & 54.9                        &                     -        \\
+        \midrule
+        LoRA BF16  & 88.8   & 40.5                            & 42.6                            & 47.1                             & 55.4                        & 60.7                          \\
+        QLoRA Int8  & 88.8   & 40.4                            & 42.9                            & 45.4                             & 56.5                        & 60.7                          \\
+        QLoRA FP4  & 88.6  & 40.3                            & 42.4                            & 47.5                             & 55.6                        & 60.9                          \\
+        QLoRA NF4 + DQ & - & 40.4 &	42.7 &	47.7 &	55.3 &	60.9 \\
+        \bottomrule
+        \end{tabular}
+        \end{table}
+        """
+
+        table = Tex(table_tex, template=self.tex_template).scale(0.6)
+        table.move_to(UP * 0.5)  # shift up to leave space for caption
+
+        caption_text = (
+            r"Experiments comparing 16-bit BrainFloat (BF16), 8-bit Integer (Int8), 4-bit Float (FP4), and 4-bit NormalFloat (NF4)"
+            r"on GLUE and Super-NaturalInstructions. QLoRA replicates 16-bit LoRA and full-finetuning."
+        )
+        caption = (
+            Tex(caption_text, font_size=24)
+            .next_to(table, DOWN, buff=0.3)
+            .scale(0.8)
+            .set_color(WHITE)
+        )
+
+        self.play(Write(table))
+        self.play(Write(caption, shift=DOWN))
 
         transform = self.new_slide()
 
@@ -1271,9 +1314,8 @@ class Main(Slide):
                 text="1. It's surprising that LoRA can perform well even at low ranks.\nIs there truly that low dimensionality needed for the task?\nAnd if so how can LoRA find it effectively amongst the heavily\noverparameterised model?",
                 weight=str(FontWeight.SEMIBOLD),
             ),
-            # TODO: Second discussion
             Text(
-                text="2. Discussion Point 2: TODO",
+                text="2. At what point does QLoRA's quantisation start to significantly\ndegrade performance? Are there certain tasks or datasets\nthat are more sensitive to this?",
                 weight=str(FontWeight.SEMIBOLD),
             ),
         )
@@ -1283,6 +1325,8 @@ class Main(Slide):
         ).center().shift(0.5 * UP)
 
         self.play(
+            Unwrite(caption, run_time=0.5),
+            Unwrite(table, run_time=1),
             transform,
             ReplacementTransform(old_slide_title, slide_title),
         )

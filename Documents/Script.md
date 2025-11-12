@@ -69,20 +69,24 @@ QLoRA also benefits from storing the optimiser state (i.e. Adam parametes) in CP
 
 #### Advantages (QLoRA)
 
-<!-- TODO: -->
+- QLoRa enjoys most of the existing LoRA advantages
+- But it also enjoys SIGNIFICANT memory savings as calculating the backpropagations results of the model on the Low Rank Adaptors is done in quantised terms
+- It can achieve full baseline fine-tuning performance
 
 #### Drawbacks (QLoRA)
 
-<!-- TODO: -->
+- However, there are some drawbacks. The quantisation causes information loss which can impact performance.
+- The restrcited representation can potentially lead to less effective models than basic LoRA due to a lower overall representability within the model
+- And finally fine-tuning perforamance can be very dependent on the dataset
 
 ### QLoRA: Performance
 
-<!-- TODO: -->
+This result from the paper shows that QLoRA is able to replicate both LoRA and full fine-tuning across a variety of models
 
 ## Discussion Points
 
 1. LoRA low rank effectiveness - If the model is so overparameterised that even a completely rank deficient LoRA can pull out the relevant features, how is LoRA able to find that relevant feature within the myriad features of the model.
-2. <!-- TODO: -->
+2. QLoRA quantisation degradation - Completely quantising the model to a bit would presumably result in very poor fine-tuning performance. Are there domains and tasks which are more or less sensitive to the quantisation performance loss?
 
 ## Questions
 

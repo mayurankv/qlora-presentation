@@ -1,0 +1,23 @@
+\documentclass[preview]{standalone}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\begin{center}
+{\begin{tabular}{lrrrrrr}
+        \toprule
+        Dataset & \multicolumn{1}{c}{GLUE (Acc.)} & \multicolumn{5}{c}{Super-NaturalInstructions (RougeL)} \\
+        % \cmidrule{2-7}
+        Model  &  \multicolumn{1}{l}{RoBERTa-large} & \multicolumn{1}{l}{T5-80M} & \multicolumn{1}{l}{T5-250M} & \multicolumn{1}{l}{T5-780M} & \multicolumn{1}{l}{T5-3B} & \multicolumn{1}{l}{T5-11B} \\
+        \midrule
+        BF16 & 88.6 & 40.1                            & 42.1                            & 48.0                               & 54.3                        & 62.0                            \\
+        BF16 replication  & 88.6 & 40.0                              & 42.2                            & 47.3                             & 54.9                        &                     -        \\
+        \midrule
+        LoRA BF16  & 88.8   & 40.5                            & 42.6                            & 47.1                             & 55.4                        & 60.7                          \\
+        \method Int8  & 88.8   & 40.4                            & 42.9                            & 45.4                             & 56.5                        & 60.7                          \\
+        \method FP4  & 88.6  & 40.3                            & 42.4                            & 47.5                             & 55.6                        & 60.9                          \\
+        \method NF4 + DQ & - & 40.4 &	42.7 &	47.7 &	55.3 &	60.9 \\
+        \bottomrule
+        \end{tabular}}
+\end{center}
+\end{document}
