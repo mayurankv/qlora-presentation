@@ -61,6 +61,8 @@ STYLE = Style()
 FONT = "Mona Sans"
 TITLE_WRITE_TIME = 1
 
+tex_template = TexTemplate(preamble=r"\usepackage{booktabs}")
+
 
 class Main(Slide):
     def __init__(
@@ -73,61 +75,55 @@ class Main(Slide):
             **kwargs,
         )
 
-        self.tex_template = TexTemplate()
-        self.tex_template.add_to_preamble(
-            txt=r"""
-                \usepackage{booktabs}
-				\usepackage{amsmath}
-				\usepackage{amssymb}
-				\usepackage{amsfonts}
-				\usepackage{amsthm}
-				\usepackage{mathtools}
-				\usepackage{array}
-				\usepackage{xfrac}
-				\usepackage{multirow}
-				\usepackage{newtxmath}
-				%\usepackage{unicode-math}
-				# \AtBeginDocument{%
-				# 	\let\mathbb\relax
-				# 	\let\mathcal\relax
-				# 	\DeclareMathAlphabet{\mathbb}{U}{msb}{m}{n}
-				# 	\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
-				# }
+        # \usepackage{amsmath}
+        # \usepackage{amssymb}
+        # \usepackage{amsfonts}
+        # \usepackage{amsthm}
+        # \usepackage{mathtools}
+        # \usepackage{array}
+        # \usepackage{xfrac}
+        # \usepackage{multirow}
+        # \usepackage{newtxmath}
+        # %\usepackage{unicode-math}
+        # # \AtBeginDocument{%
+        # # 	\let\mathbb\relax
+        # # 	\let\mathcal\relax
+        # # 	\DeclareMathAlphabet{\mathbb}{U}{msb}{m}{n}
+        # # 	\DeclareMathAlphabet{\mathcal}{OMS}{cmsy}{m}{n}
+        # # }
 
-				# \newtheoremstyle{dissertation}
-				# 	{0\topsep}	% Space above
-				# 	{0.6\topsep}	% Space below
-				# 	{}				% Body font
-				# 	{}				% Indent amount
-				# 	{\bfseries}		% Theorem head font
-				# 	{}				% Punctuation after theorem head
-				# 	{0.5em}			% Space after theorem head
-				# 	{}				% Theorem head spec (can be left empty, meaning ‘normal’)
+        # # \newtheoremstyle{dissertation}
+        # # 	{0\topsep}	% Space above
+        # # 	{0.6\topsep}	% Space below
+        # # 	{}				% Body font
+        # # 	{}				% Indent amount
+        # # 	{\bfseries}		% Theorem head font
+        # # 	{}				% Punctuation after theorem head
+        # # 	{0.5em}			% Space after theorem head
+        # # 	{}				% Theorem head spec (can be left empty, meaning ‘normal’)
 
-				# \theoremstyle{dissertation}
-				# \newtheorem*{definition}{Definition}
-				# \newtheorem*{theorem}{Theorem}
-				# \newtheorem*{proposition}{Proposition}
-				# \newtheorem*{lemma}{Lemma}
-				# \newtheorem*{corollary}{Corollary}
-				# \newtheorem*{example}{Example}
-				# \newtheorem*{remark}{Remark}
-				# %\renewcommand{\thetheorem}{\arabic{theorem}}
-				# %\renewcommand{\thedefinition}{\arabic{definition}}
+        # # \theoremstyle{dissertation}
+        # # \newtheorem*{definition}{Definition}
+        # # \newtheorem*{theorem}{Theorem}
+        # # \newtheorem*{proposition}{Proposition}
+        # # \newtheorem*{lemma}{Lemma}
+        # # \newtheorem*{corollary}{Corollary}
+        # # \newtheorem*{example}{Example}
+        # # \newtheorem*{remark}{Remark}
+        # # %\renewcommand{\thetheorem}{\arabic{theorem}}
+        # # %\renewcommand{\thedefinition}{\arabic{definition}}
 
-				# \renewenvironment{proof}[1][\proofname]%
-				# {\noindent\trivlist\item\ignorespaces{\bfseries #1. }}%
-				# 	{\hfill $\square$}
+        # # \renewenvironment{proof}[1][\proofname]%
+        # # {\noindent\trivlist\item\ignorespaces{\bfseries #1. }}%
+        # # 	{\hfill $\square$}
 
-				# \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
-				# \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
-				# \newcolumntype{L}{>{\centering\arraybackslash}m{3cm}}
-				# \newcolumntype{E}{>{\centering\arraybackslash}m{6cm}}
-				# \newcolumntype{F}{>{\centering\arraybackslash}m{7cm}}
-				# \newcolumntype{A}{>{\centering\arraybackslash}m{5cm}}
-				# \newcommand*{\doi}[1]{\href{http://dx.doi.org/#1}{doi: #1}}
-			"""
-        )
+        # # \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+        # # \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+        # # \newcolumntype{L}{>{\centering\arraybackslash}m{3cm}}
+        # # \newcolumntype{E}{>{\centering\arraybackslash}m{6cm}}
+        # # \newcolumntype{F}{>{\centering\arraybackslash}m{7cm}}
+        # # \newcolumntype{A}{>{\centering\arraybackslash}m{5cm}}
+        # # \newcommand*{\doi}[1]{\href{http://dx.doi.org/#1}{doi: #1}}
         Text.set_default(
             font=FONT,
             font_size=FontSize.CONTENT,
@@ -476,6 +472,8 @@ class Main(Slide):
     def construct(
         self,
     ) -> None:
+        tex_template = TexTemplate()
+        tex_template.add_to_preamble(txt=r"\usepackage{booktabs}")
         background = Circle(
             color=STYLE.background.primary,
             radius=10,
@@ -902,9 +900,7 @@ class Main(Slide):
         )
 
         table_tex = r"""
-        \begin{table}
-        \centering
-        \begin{tabular}{l|r|ccc}
+        \begin{tabular}{l r ccc}
         \toprule
         \textbf{Model \& Method} & \# Trainable & WikiSQL & MNLI-m & SAMSum  \\
         \midrule
@@ -918,10 +914,9 @@ class Main(Slide):
         GPT-3 (LoRA)                & 37.7M      & \textbf{74.0} & \textbf{91.6} & 53.4/29.2/45.1 \\
         \bottomrule
         \end{tabular}
-        \end{table}
         """
 
-        table = Tex(table_tex, template=self.tex_template).scale(0.6)
+        table = Tex(table_tex, tex_template=tex_template).scale(0.6)
         table.move_to(UP * 0.5)  # shift up to leave space for caption
 
         caption_text = (
@@ -1258,8 +1253,6 @@ class Main(Slide):
         )
 
         table_tex = r"""
-        \begin{table}
-        \centering
         \begin{tabular}{lrrrrrr}
         \toprule
         Dataset & \multicolumn{1}{c}{GLUE (Acc.)} & \multicolumn{5}{c}{Super-NaturalInstructions (RougeL)} \\
@@ -1275,10 +1268,9 @@ class Main(Slide):
         QLoRA NF4 + DQ & - & 40.4 &	42.7 &	47.7 &	55.3 &	60.9 \\
         \bottomrule
         \end{tabular}
-        \end{table}
         """
 
-        table = Tex(table_tex, template=self.tex_template).scale(0.6)
+        table = Tex(table_tex, tex_template=tex_template).scale(0.6)
         table.move_to(UP * 0.5)  # shift up to leave space for caption
 
         caption_text = (
